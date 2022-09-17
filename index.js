@@ -16,6 +16,8 @@ app.use(jwt({
     secret : process.env.secret ,
     algorithms : ['HS256']
 
+   }).unless({
+    path : ['/register','/login']
    }));
 app.use('/register',userRoutes);
 app.use('/login',loginRoutes);
