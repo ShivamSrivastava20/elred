@@ -33,7 +33,7 @@ mongoose.connect(URI , (err)=>
         console.log("Connected to Database : " , URI);
     }
 })
-app.listen(3000 , (err)=>
+app.listen(3001 , (err)=>
 {
     if(err)
     {
