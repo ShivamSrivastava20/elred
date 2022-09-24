@@ -12,16 +12,27 @@ const loginRoutes=require('./API_Routes/Loginroutes');
 const taskRoutes=require('./API_Routes/taskroutes');
 
 
+
 app.use(jwt({ 
     secret : process.env.secret ,
     algorithms : ['HS256']
 
    }).unless({
-    path : ['/register','/login']
+    path : ['/register','/user/login']
    }));
+
+
+ app.use((err,req,res,next)=>
+   {
+if(err)
+{
+    res.json({message : err.name});
+}
+   })
 app.use('/register',userRoutes);
-app.use('/login',loginRoutes);
+app.use('/user',loginRoutes);
 app.use('/createtask',taskRoutes);
+
 
 mongoose.connect(URI , (err)=>
 {

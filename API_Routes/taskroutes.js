@@ -5,8 +5,11 @@ const taskRoute= require('../Models(userSchema)/taskSchema');
 
 router.post('/',async (req,res)=>
 {
-
-    if(!req.body.task)
+    let [first, second] = Object.keys(req.body);
+if(Object.keys(req.body).length>2 || first!='task' || second!='status'){
+    res.json({success:"False" , message : "Please donot add Extra/Invalid fields in the Request Body"});
+}
+ else { if(!req.body.task)
     {
         res.json({success : "False" , message : " Please add a Task"});
     }
@@ -29,28 +32,33 @@ router.post('/',async (req,res)=>
         res.json({success : "True" , message : "Task Created !!" ,id : taskCreat._id});
 
     }}
-})
+}})
 
 router.patch('/:id' , async (req,res)=>
 {
-    const updateTask=await taskRoute.findByIdAndUpdate(req.params.id,
-    {
-        task : req.body.task,
-        status : req.body.status
-    });
 
-
-    if(!updateTask)
-    {
-    res.status(500).json({
-        message : `The Task with given ${req.params.id} ID is Not Updated !!`
-    });
+    if(Object.keys(req.body).length>2){
+        res.json({success:"False" , message : "Please donot add extra fields in the Request Body"});
     }
-    else {
-        res.status(200).json({
-            message : `The Task with given ${req.params.id} ID is Updated !!`
-        })
-    }
+    else{
+       const updateTask=await taskRoute.findByIdAndUpdate(req.params.id,
+            {
+                task : req.body.task,
+                status : req.body.status
+            });
+            if(!updateTask)
+            {
+            res.status(500).json({
+                message : `The Task with given ${req.params.id} ID is Not Updated !!`
+            });
+            }
+            else {
+                res.status(200).json({
+                    message : `The Task with given ${req.params.id} ID is Updated !!`
+                })
+            }
+}
+    
 })
 
 router.delete('/:id' , async (req,res)=>
