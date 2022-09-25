@@ -1,11 +1,13 @@
 const { User } = require('../Models(userSchema)/userSchema');
 //const crypto = require('crypto').randomBytes(256).toString('hex');
-var LocalStorage = require('node-localstorage').LocalStorage,
-localStorage = new LocalStorage('./scratch');
+//var LocalStorage = require('node-localstorage').LocalStorage,
+//localStorage = new LocalStorage('./scratch');
+
+
 
 require('dotenv/config');
 const secret =process.env.secret;
-var token = undefined;
+
 
 
 
@@ -17,6 +19,9 @@ const bcrypt = require('bcrypt-nodejs');
 const express = require('express');
 const router = express.Router();
 
+var token=undefined;
+var newOTPVerification;
+
 let transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     auth: {
@@ -27,13 +32,14 @@ let transporter = nodemailer.createTransport({
 })
 // importing json web token
 
-const jwt = require('jsonwebtoken');
+const jwtr = require('jsonwebtoken');
 // Login route
 
 router.post('/login', (req, res) => {
+   // console.log(User.findOne({ email: req.body.email.toLowerCase() }));
 
     let [first, second] = Object.keys(req.body);
-    console.log(first , second);
+   // console.log(first , second);
     if(Object.keys(req.body).length>2 || first!='email' || second!='password'){
         res.json({success:"False" , message : "Please donot add Extra/Invalid/Empty fields in the Request Body"});
     }
@@ -75,11 +81,12 @@ router.post('/login', (req, res) => {
 
                             // OTP :
 
-         token = jwt.sign({ email: user._id }, secret,  { expiresIn: '180s' });
-        module.exports = token;
+        token = jwtr.sign({ email: user._id }, secret,  { expiresIn: '360s' });
+        
+        //module.exports = token;
                            // localStorage.setItem('token', token);
                           //  console.log(localStorage);
-                            res.json({ success: true,message: "Valid User !! Otp is sent to user's email id and your token will expire in 180 seconds " , token :token, email: user.email });
+                        
 
 
                             const sendOTPVerificationEmail = async (email, _id, res) => {
@@ -93,17 +100,23 @@ router.post('/login', (req, res) => {
                                          <p><b> This OTP is going to be expired in an hour !! </b></p>
                                          `
                                     }
+                                  
                                     
-                                           const newOTPVerification=await new UserOTPVerification(
+                                           newOTPVerification=await new UserOTPVerification(
                                                {
                                                    userID : _id,
                                                    OTP: otp,
                                                    createdAt : Date.now(),
                                                    expiresAt : Date.now() +10 ,
+                                                   Token :token     
                                                }
                                            );
                                            await newOTPVerification.save(),
                                     await transporter.sendMail(mailOptions);
+                                    return newOTPVerification._id;
+                                    
+                                 
+                                   
 
                                 }
                                 catch (error) {
@@ -112,8 +125,13 @@ router.post('/login', (req, res) => {
 
 
                             }
-                            sendOTPVerificationEmail(user.email, user._id);
+                         const ID=sendOTPVerificationEmail(user.email, user._id)
+                         .then((ID)=>{
+                             console.log("ID ", ID);
+                         res.json({ success: true,message: "Valid User !! Otp is sent to user's email id and your token will expire in 180 seconds " , token :token, email: user.email ,id : ID});
 
+                        })
+                           
                              }
                     }
                 }
@@ -125,12 +143,30 @@ router.post('/login', (req, res) => {
     }
 }});
 
-router.post('/logout',(req,res)=>
+router.delete('/:id' , async (req,res)=>
 {
+    const logout=await UserOTPVerification.findByIdAndRemove(req.params.id);
 
-token=undefined;
-res.json({message : "You have been successfully logged out !! Please login again to access other APIs"});
-});
+
+    if(!logout)
+    {
+    res.status(500).json({
+        message : "You Cannot Logout again !!"
+    });
+    }
+    else {
+        res.status(200).json({
+            message :  "You have been successfully logged out !! Please login again to access other APIs"});
+       } })
+    
+
+
+
+
+
+
+
+
 
 
 module.exports = router;

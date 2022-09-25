@@ -2,9 +2,26 @@
 const express = require('express');
 const router = express.Router();
 const taskRoute= require('../Models(userSchema)/taskSchema');
+const UserOTPVerification = require('../Models(userSchema)/userOTPVerification');
+
+
 
 router.post('/',async (req,res)=>
 {
+//console.log("Model :",taskRoute,UserOTPVerification);
+
+   //console.log);
+    let tok=req.rawHeaders[3].split(' ').pop();
+    UserOTPVerification.findOne({ Token: tok },async (err, user) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            if (!user) {
+              res.send({message : "User logged out !!"})
+            }
+            else {
+                
     let [first, second] = Object.keys(req.body);
 if(Object.keys(req.body).length>2 || first!='task' || second!='status'){
     res.json({success:"False" , message : "Please donot add Extra/Invalid fields in the Request Body"});
@@ -32,10 +49,25 @@ if(Object.keys(req.body).length>2 || first!='task' || second!='status'){
         res.json({success : "True" , message : "Task Created !!" ,id : taskCreat._id});
 
     }}
-}})
+}
+}}})
+
+})
 
 router.patch('/:id' , async (req,res)=>
 {
+    let tok=req.rawHeaders[3].split(' ').pop();
+    UserOTPVerification.findOne({ Token: tok },async (err, user) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            if (!user) {
+              res.send({message : "User logged out !!"})
+            }
+            else {
+
+
 
     if(Object.keys(req.body).length>2){
         res.json({success:"False" , message : "Please donot add extra fields in the Request Body"});
@@ -58,11 +90,22 @@ router.patch('/:id' , async (req,res)=>
                 })
             }
 }
-    
+}}})
 })
 
 router.delete('/:id' , async (req,res)=>
 {
+    let tok=req.rawHeaders[3].split(' ').pop();
+    UserOTPVerification.findOne({ Token: tok },async (err, user) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            if (!user) {
+              res.send({message : "User logged out !!"})
+            }
+            else {
+
     const updateTask=await taskRoute.findByIdAndRemove(req.params.id);
 
 
@@ -76,7 +119,7 @@ router.delete('/:id' , async (req,res)=>
         res.status(200).json({
             message : `The Task with given ${req.params.id} ID is Deleted !!`
         })
-    }
+    }}}})
 })
 
 

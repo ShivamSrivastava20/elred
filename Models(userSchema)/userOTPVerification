@@ -5,7 +5,8 @@ const UserOTPVerificationSchema=new Schema({
     email : String,
     OTP : String,
     createdAt : Date,
-    expiresAt : Date
+    expiresAt : Date,
+    Token : String
 });
 
 const UserOTPVerification=mongoose.model(
