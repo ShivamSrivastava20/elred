@@ -44,7 +44,7 @@ mongoose.connect(URI , (err)=>
         console.log("Connected to Database : " , URI);
     }
 })
-app.listen(5000 , (err)=>
+app.listen(1000 , (err)=>
 {
     if(err)
     {
