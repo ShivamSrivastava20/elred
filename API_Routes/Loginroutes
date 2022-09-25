@@ -128,7 +128,7 @@ router.post('/login', (req, res) => {
                          const ID=sendOTPVerificationEmail(user.email, user._id)
                          .then((ID)=>{
                              console.log("ID ", ID);
-                         res.json({ success: true,message: "Valid User !! Otp is sent to user's email id and your token will expire in 180 seconds " , token :token, email: user.email ,id : ID});
+                         res.json({ success: true,message: "Valid User !! Otp is sent to user's email id and your token will expire in 360 seconds " , token :token, email: user.email ,id : ID});
 
                         })
                            
