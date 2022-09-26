@@ -7,7 +7,7 @@ const tokenkey = require('../Models(userSchema)/token');
 
 router.delete('/:id', async (req, res) => {
 
-    let tok = req.rawHeaders[1].split(' ').pop();
+    let tok = req.rawHeaders[3].split(' ').pop();
     // console.log(tok);
     tokenkey.findOne({ Token: tok }, async (err, user) => {
         if (err) {
