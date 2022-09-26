@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const taskRoute= require('../Models(userSchema)/taskSchema');
 const UserOTPVerification = require('../Models(userSchema)/userOTPVerification');
+const tokenkey =require('../Models(userSchema)/token');
 
 
 
@@ -11,14 +12,15 @@ router.post('/',async (req,res)=>
 //console.log("Model :",taskRoute,UserOTPVerification);
 
    //console.log);
-    let tok=req.rawHeaders[3].split(' ').pop();
-    UserOTPVerification.findOne({ Token: tok },async (err, user) => {
+    let tok=req.rawHeaders[1].split(' ').pop();
+   // console.log(tok);
+   tokenkey.findOne({ Token: tok },async (err, user) => {
         if (err) {
             console.log(err);
         }
         else {
             if (!user) {
-              res.send({message : "User logged out !!"})
+              res.send({message : "Please Provide a valid Token !!"})
             }
             else {
                 
@@ -57,13 +59,13 @@ if(Object.keys(req.body).length>2 || first!='task' || second!='status'){
 router.patch('/:id' , async (req,res)=>
 {
     let tok=req.rawHeaders[3].split(' ').pop();
-    UserOTPVerification.findOne({ Token: tok },async (err, user) => {
+    tokenkey.findOne({ Token: tok },async (err, user) => {
         if (err) {
             console.log(err);
         }
         else {
             if (!user) {
-              res.send({message : "User logged out !!"})
+              res.send({message : "Please Provide a valid Token !!"})
             }
             else {
 
@@ -96,13 +98,13 @@ router.patch('/:id' , async (req,res)=>
 router.delete('/:id' , async (req,res)=>
 {
     let tok=req.rawHeaders[3].split(' ').pop();
-    UserOTPVerification.findOne({ Token: tok },async (err, user) => {
+    tokenkey.findOne({ Token: tok },async (err, user) => {
         if (err) {
             console.log(err);
         }
         else {
             if (!user) {
-              res.send({message : "User logged out !!"})
+              res.send({message : "Please Provide a valid Token !!"})
             }
             else {
 
@@ -121,6 +123,8 @@ router.delete('/:id' , async (req,res)=>
         })
     }}}})
 })
+
+
 
 
 module.exports = router;

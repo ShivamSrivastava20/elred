@@ -10,16 +10,17 @@ const { expressjwt: jwt } = require('express-jwt');
 const userRoutes=require('./API_Routes/Routes');
 const loginRoutes=require('./API_Routes/Loginroutes');
 const taskRoutes=require('./API_Routes/taskroutes');
+const logoutroutes=require('./API_Routes/logout');
 
 
-
+/*
 app.use(jwt({ 
     secret : process.env.secret ,
     algorithms : ['HS256']
 
    }).unless({
-    path : ['/register','/user/login']
-   }));
+    path : ['/register','/user/login','/user/']
+   }));*/
 
 
  app.use((err,req,res,next)=>
@@ -32,6 +33,7 @@ if(err)
 app.use('/register',userRoutes);
 app.use('/user',loginRoutes);
 app.use('/createtask',taskRoutes);
+app.use('/logout',logoutroutes);
 
 
 mongoose.connect(URI , (err)=>

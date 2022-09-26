@@ -1,0 +1,39 @@
+const express = require('express');
+const router = express.Router();
+//const UserOTPVerification = require('../Models(userSchema)/userOTPVerification');
+const tokenkey = require('../Models(userSchema)/token');
+
+
+
+router.delete('/:id', async (req, res) => {
+
+    let tok = req.rawHeaders[1].split(' ').pop();
+    // console.log(tok);
+    tokenkey.findOne({ Token: tok }, async (err, user) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            if (!user) {
+                res.send({ message: "Please Provide a valid Token !!" })
+            }
+            else {
+                const logout = await tokenkey.findByIdAndRemove(req.params.id);
+
+
+                if (!logout) {
+                    res.status(500).json({
+                        message: "You Cannot Logout again !!"
+                    });
+                }
+                else {
+                    res.status(200).json({
+                        message: "You have been successfully logged out !! Please login again to access other APIs"
+                    });
+                }
+            }
+        }
+    })
+})
+
+module.exports = router;
