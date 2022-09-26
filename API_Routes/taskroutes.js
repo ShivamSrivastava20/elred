@@ -12,8 +12,8 @@ router.post('/',async (req,res)=>
 //console.log("Model :",taskRoute,UserOTPVerification);
 
    //console.log);
-    let tok=req.rawHeaders[1].split(' ').pop();
-   // console.log(tok);
+    let tok=req.rawHeaders[3].split(' ').pop();
+   console.log(tok);
    tokenkey.findOne({ Token: tok },async (err, user) => {
         if (err) {
             console.log(err);
