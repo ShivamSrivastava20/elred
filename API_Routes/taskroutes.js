@@ -39,6 +39,7 @@ if(Object.keys(req.body).length>2 || first!='task' || second!='status'){
         }
     
     else{
+        if(req.body.status == "Complete" || req.body.status == "Incomplete"){
         const taskCreat =new taskRoute(
             {
                 task : req.body.task,
@@ -50,7 +51,10 @@ if(Object.keys(req.body).length>2 || first!='task' || second!='status'){
        await taskCreat.save();
         res.json({success : "True" , message : "Task Created !!" ,id : taskCreat._id});
 
-    }}
+    }
+else{
+       res.json({success : "False" , message :"Please provide the state of status : Complete/Incomplete"})
+}}}
 }
 }}})
 
@@ -75,6 +79,7 @@ router.patch('/:id' , async (req,res)=>
         res.json({success:"False" , message : "Please donot add extra fields in the Request Body"});
     }
     else{
+        if(req.body.status == "Complete" || req.body.status == "Incomplete"){
        const updateTask=await taskRoute.findByIdAndUpdate(req.params.id,
             {
                 task : req.body.task,
@@ -91,6 +96,10 @@ router.patch('/:id' , async (req,res)=>
                     message : `The Task with given ${req.params.id} ID is Updated !!`
                 })
             }
+}
+else{
+res.json({success : "False" , message :"Please provide the state of status : Complete/Incomplete"})
+}
 }
 }}})
 })
